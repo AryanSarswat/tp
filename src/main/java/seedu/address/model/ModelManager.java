@@ -22,6 +22,7 @@ public class ModelManager implements Model {
     private static final Logger logger = LogsCenter.getLogger(ModelManager.class);
 
     private final AddressBook addressBook;
+    private final EventBook eventBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
     private final ObservableList<Event> eventList;
@@ -29,19 +30,21 @@ public class ModelManager implements Model {
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
      */
-    public ModelManager(ReadOnlyAddressBook addressBook, ReadOnlyUserPrefs userPrefs) {
-        requireAllNonNull(addressBook, userPrefs);
+    public ModelManager(ReadOnlyAddressBook addressBook, ReadOnlyEventBook eventBook, ReadOnlyUserPrefs userPrefs) {
+        requireAllNonNull(addressBook, eventBook, userPrefs);
 
-        logger.fine("Initializing with address book: " + addressBook + " and user prefs " + userPrefs);
+        logger.fine("Initializing with address book: " + addressBook + "event book:" + eventBook
+                + " and user prefs " + userPrefs);
 
         this.addressBook = new AddressBook(addressBook);
+        this.eventBook = new EventBook(eventBook);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
-        eventList = FXCollections.observableArrayList();
+        eventList = this.eventBook.getEventList();
     }
 
     public ModelManager() {
-        this(new AddressBook(), new UserPrefs());
+        this(new AddressBook(), new EventBook(), new UserPrefs());
     }
 
     //=========== UserPrefs ==================================================================================
@@ -115,7 +118,35 @@ public class ModelManager implements Model {
         addressBook.setPerson(target, editedPerson);
     }
 
-    //=========== Filtered Person List Accessors =============================================================
+    //=========== EventBook ==================================================================================
+
+    @Override
+    public void setEventBook(ReadOnlyEventBook eventBook) {
+        this.eventBook.resetData(eventBook);
+    }
+
+    @Override
+    public ReadOnlyEventBook getEventBook() {
+        return eventBook;
+    }
+
+    @Override
+    public boolean hasEvent(Event event) {
+        requireNonNull(event);
+        return eventBook.hasEvent(event);
+    }
+
+    @Override
+    public void addEvent(Event event) {
+        eventBook.addEvent(event);
+    }
+
+    @Override
+    public void deleteEvent(Event target) {
+        eventBook.removeEvent(target);
+    }
+
+    //=========== List Accessors ===========================================================================
 
     /**
      * Returns an unmodifiable view of the list of {@code Person} backed by the internal list of
@@ -152,8 +183,8 @@ public class ModelManager implements Model {
         // state check
         ModelManager other = (ModelManager) obj;
         return addressBook.equals(other.addressBook)
+                && eventBook.equals(other.eventBook)
                 && userPrefs.equals(other.userPrefs)
                 && filteredPersons.equals(other.filteredPersons);
     }
-
 }

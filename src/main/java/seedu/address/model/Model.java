@@ -77,15 +77,44 @@ public interface Model {
      */
     void setPerson(Person target, Person editedPerson);
 
-    /** Returns an unmodifiable view of the filtered person list */
-    ObservableList<Person> getFilteredPersonList();
+    //=========== EventBook =============================================================
+
+    /**
+     * Replaces event book data with the data in {@code eventBook}.
+     */
+    void setEventBook(ReadOnlyEventBook eventBook);
+
+    /** Returns the EventBook */
+    ReadOnlyEventBook getEventBook();
+
+    /**
+     * Returns true if an event with the same identity as {@code event} exists in the event book.
+     */
+    boolean hasEvent(Event event);
+
+    /**
+     * Adds the given event.
+     * {@code event} must not already exist in the event book.
+     */
+    void addEvent(Event event);
+
+    /**
+     * Deletes the given event.
+     * The event must exist in the event book.
+     */
+    void deleteEvent(Event target);
+
+    //=========== List Accessors =============================================================
 
     /** Returns an unmodifiable view of the filtered person list */
-    ObservableList<Event> getEventsList();
+    ObservableList<Person> getFilteredPersonList();
 
     /**
      * Updates the filter of the filtered person list to filter by the given {@code predicate}.
      * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredPersonList(Predicate<Person> predicate);
+
+    /** Returns an unmodifiable view of the events list */
+    ObservableList<Event> getEventsList();
 }
