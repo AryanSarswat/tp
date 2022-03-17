@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import seedu.address.commons.core.Messages;
 import seedu.address.commons.core.index.Index;
@@ -97,7 +98,11 @@ public class EditEventCommand extends Command {
         Set<FriendName> removeFriendNames = editEventDescriptor.getRemoveFriendNames().orElse(null);
         Set<FriendName> currentFriendName = eventToEdit.getFriendNames();
         Set<FriendName> updatedFriendNames = new HashSet<>(currentFriendName);
+
+
         if (removeFriendNames != null) {
+            removeFriendNames = removeFriendNames.stream()
+                    .filter(name -> checkFriendNameInList(eventToEdit, name)).collect(Collectors.toSet());
             updatedFriendNames.removeAll(removeFriendNames);
         }
         if (addFriendNames != null) {
@@ -105,6 +110,10 @@ public class EditEventCommand extends Command {
         }
 
         return new Event(updatedName, updatedDateTime, updatedDescription, updatedFriendNames);
+    }
+
+    private static boolean checkFriendNameInList(Event eventToEdit, FriendName name) {
+        return eventToEdit.getFriendNames().contains(name);
     }
 
     @Override
