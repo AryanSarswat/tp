@@ -4,5 +4,5 @@
 <?import javafx.scene.layout.StackPane?>
 
 <StackPane styleClass="stack-pane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <TextArea fx:id="commandTextArea" onKeyPressed="#keyPressed" prefHeight="100.0" prefWidth="200.0" promptText="Enter command here..." stylesheets="@DarkTheme.css" />
+   <TextArea fx:id="commandTextArea" onKeyPressed="#keyPressed" prefHeight="60.0" prefWidth="200.0" promptText="Enter command here..." stylesheets="@DarkTheme.css" />
 </StackPane>
